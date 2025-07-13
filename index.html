@@ -37,7 +37,7 @@
         }
       };
 
-      const tieneArchivos = archivos[materia];
+      const recursos = archivos[materia];
 
       return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -45,19 +45,23 @@
             <h2 className="text-xl font-bold mb-4 text-gray-800">Plan de Mejoramiento</h2>
             <p className="mb-4">Debes realizar un plan de mejoramiento para <strong>{materia}</strong>.</p>
 
-            {tieneArchivos && (
+            {recursos ? (
               <div className="mb-4 space-y-2">
-                {archivos[materia].ppt && (
-                  <a href={archivos[materia].ppt} download className="block text-blue-600 hover:underline">
+                {recursos.ppt && (
+                  <a href={recursos.ppt} download className="block text-blue-600 hover:underline">
                     📎 Descargar Presentación (PPT)
                   </a>
                 )}
-                {archivos[materia].doc && (
-                  <a href={archivos[materia].doc} download className="block text-blue-600 hover:underline">
+                {recursos.doc && (
+                  <a href={recursos.doc} download className="block text-blue-600 hover:underline">
                     📄 Descargar Guía (DOC)
                   </a>
                 )}
               </div>
+            ) : (
+              <p className="mb-4 text-sm text-gray-600 italic">
+                Para esta materia, debes hablar con el docente encargado.
+              </p>
             )}
 
             <button onClick={onClose} className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
