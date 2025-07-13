@@ -30,10 +30,10 @@
 
       const archivos = {
         Física: {
-               doc: "mmejoramiento_fisica.docx"
+          doc: "mejoramiento_fisica.docx"
         },
         Química: {
-          ppt: "mejoramiento_quimica.pptm",
+          ppt: "mejoramiento_quimica.pptm"
         }
       };
 
@@ -47,12 +47,16 @@
 
             {tieneArchivos && (
               <div className="mb-4 space-y-2">
-                <a href={archivos[materia].ppt} download className="block text-blue-600 hover:underline">
-                  📎 Descargar Presentación (PPT)
-                </a>
-                <a href={archivos[materia].doc} download className="block text-blue-600 hover:underline">
-                  📄 Descargar Guía (DOC)
-                </a>
+                {archivos[materia].ppt && (
+                  <a href={archivos[materia].ppt} download className="block text-blue-600 hover:underline">
+                    📎 Descargar Presentación (PPT)
+                  </a>
+                )}
+                {archivos[materia].doc && (
+                  <a href={archivos[materia].doc} download className="block text-blue-600 hover:underline">
+                    📄 Descargar Guía (DOC)
+                  </a>
+                )}
               </div>
             )}
 
