@@ -14,7 +14,7 @@
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
   <div id="root"></div>
 
-  <!-- Archivo JS con los datos -->
+  <!-- Archivo de datos -->
   <script src="datos_notas.js"></script>
 
   <script type="text/babel">
@@ -25,7 +25,46 @@
       DBJ: "Desempeño Bajo"
     };
 
-    const GradeDisplay = ({ student, grades }) => {
+    const MejoramientoModal = ({ visible, materia, onClose }) => {
+      if (!visible) return null;
+
+      const archivos = {
+        Física: {
+               doc: "mejoramiento_fisica.docx"
+        },
+        Química: {
+          ppt: "mejoramiento_quimica.pptx",
+        }
+      };
+
+      const tieneArchivos = archivos[materia];
+
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">Plan de Mejoramiento</h2>
+            <p className="mb-4">Debes realizar un plan de mejoramiento para <strong>{materia}</strong>.</p>
+
+            {tieneArchivos && (
+              <div className="mb-4 space-y-2">
+                <a href={archivos[materia].ppt} download className="block text-blue-600 hover:underline">
+                  📎 Descargar Presentación (PPT)
+                </a>
+                <a href={archivos[materia].doc} download className="block text-blue-600 hover:underline">
+                  📄 Descargar Guía (DOC)
+                </a>
+              </div>
+            )}
+
+            <button onClick={onClose} className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const GradeDisplay = ({ student, grades, onMateriaClick }) => {
       const materiasReprobadas = Object.values(grades).filter(nota => nota === "DBJ").length;
 
       return (
@@ -36,11 +75,15 @@
               if (materia === "Estudiante") return null;
 
               const isDBJ = nota === "DBJ";
-              const cardStyle = isDBJ ? "bg-red-100 border border-red-400" : "bg-gray-50";
+              const cardStyle = isDBJ ? "bg-red-100 border border-red-400 cursor-pointer hover:bg-red-200" : "bg-gray-50";
               const textStyle = isDBJ ? "text-red-600 font-semibold" : "text-gray-600";
 
               return (
-                <div key={materia} className={`p-4 rounded-md ${cardStyle}`}>
+                <div
+                  key={materia}
+                  className={`p-4 rounded-md ${cardStyle}`}
+                  onClick={() => isDBJ && onMateriaClick(materia)}
+                >
                   <span className="font-semibold text-gray-700">{materia}:</span>
                   <span className={`ml-2 ${textStyle}`}>{gradeDescriptions[nota] || nota}</span>
                 </div>
@@ -62,6 +105,8 @@
       const [filteredStudents, setFilteredStudents] = React.useState([]);
       const [selectedStudent, setSelectedStudent] = React.useState("");
       const [studentGrades, setStudentGrades] = React.useState(null);
+      const [modalVisible, setModalVisible] = React.useState(false);
+      const [materiaSeleccionada, setMateriaSeleccionada] = React.useState("");
 
       const handleGroupChange = (e) => {
         const group = e.target.value;
@@ -94,6 +139,11 @@
         setSelectedStudent(name);
         const estudiante = filteredStudents.find(est => est.Estudiante === name);
         setStudentGrades(estudiante);
+      };
+
+      const handleMateriaClick = (materia) => {
+        setMateriaSeleccionada(materia);
+        setModalVisible(true);
       };
 
       return (
@@ -149,9 +199,20 @@
               </>
             )}
           </div>
+
           {studentGrades && (
-            <GradeDisplay student={selectedStudent} grades={studentGrades} />
+            <GradeDisplay
+              student={selectedStudent}
+              grades={studentGrades}
+              onMateriaClick={handleMateriaClick}
+            />
           )}
+
+          <MejoramientoModal
+            visible={modalVisible}
+            materia={materiaSeleccionada}
+            onClose={() => setModalVisible(false)}
+          />
         </div>
       );
     };
